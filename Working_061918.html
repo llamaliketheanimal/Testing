@@ -1,0 +1,61 @@
+<!doctype html>
+<head>
+   <!-- Includes for ADL's xAPI Wrapper -->
+   <!-- Download the files from: -->
+   <!-- https://github.com/adlnet/xAPIWrapper -->
+   <script type="text/javascript" src="cryptojs_v3.1.2.js"></script>
+   <script type="text/javascript" src="verbs.js"></script>
+   <script type="text/javascript" src="xapistatement.js"></script>
+   <script type="text/javascript" src="xapiwrapper.js"></script>
+
+
+    <script>
+    function send_statement(){
+        var conf = {
+             "endpoint" : "https://llamasoft.elmnts-stage.com/lrs/",  
+             "auth" : "Basic " + toBase64("mcRTRatOJDAhjyZkwDsjhSxNEELAiERw:vWaqVmYpdrMddmJOjkRPpaLiOcZZyTrj")
+             };
+
+        ADL.XAPIWrapper.changeConfig(conf);
+
+        //define the xapi statement being sent
+        var statement ={
+    "actor": {
+        "mbox": "mailto:learner@example.com",
+        "name": "L and D Team",
+        "objectType": "Agent"
+    },
+    "verb": {
+        "id": "http://adlnet.gov/expapi/verbs/answered",
+        "display": {
+            "en-US": "Any Questions?"
+        }
+    },
+    "object": {
+        "id": "http://adlnet.gov/expapi/activities/example",
+        "definition": {
+            "name": {
+                "en-US": "Example Activity"
+            },
+            "description": {
+                "en-US": "Example activity description"
+            }
+        },
+        "objectType": "Activity"
+
+    }
+        }; //end statement definition
+
+        // Dispatch the statement to the LRS
+        var result = ADL.XAPIWrapper.sendStatement(statement);
+        }
+    </script>
+
+</head>
+
+<body>
+    <p>Click the button to Send a Statement.</p>
+
+    <button type="button" onclick="send_statement()">Send Statements</button>
+</body>
+</html>

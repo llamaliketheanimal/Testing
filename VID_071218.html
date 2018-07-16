@@ -1,0 +1,194 @@
+<!doctype html>
+<head>
+
+      <!--NEED to work on getting all of the scripts into one script into the BODY
+        Flare has an issue with putting a scripts in the HEAD-->
+
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+      <title>xAPI Video Testing for the LLama</title>
+
+
+    <!-- Includes for ADL's xAPI Wrapper -->
+    <!-- Download the files from: -->
+    <!-- https://github.com/adlnet/xAPIWrapper -->
+    <script type="text/javascript" src="cryptojs_v3.1.2.js"></script>
+    <script type="text/javascript" src="verbs.js"></script>
+    <script type="text/javascript" src="xapistatement.js"></script>
+    <script type="text/javascript" src="xapiwrapper.js"></script>
+
+
+    <script>
+        // this will creat a number that can be used for the actor
+        // this number needs to be converted to a string to be used by the LRS as the actor
+
+      var randomNumberGEN = Math.floor((Math.random() * 900000) + 99999).toString();
+
+        // Set the URL and user credentials for the LRS
+        var conf = {
+          "endpoint" : "https://llamasoft.elmnts-stage.com/lrs/",
+          "auth" : "Basic " + toBase64("mcRTRatOJDAhjyZkwDsjhSxNEELAiERw:vWaqVmYpdrMddmJOjkRPpaLiOcZZyTrj")
+        };
+
+        // Tell the xAPI driver to use these creds
+        ADL.XAPIWrapper.changeConfig(conf);
+
+        // This function will programmatically build the statement using variables
+        function sendxAPIStatement(userNumber, action) {
+            var statement = {
+                "actor": {
+                    "account": {
+                        "homePage": "http://www.example.com",
+                        "name": userNumber
+                    },
+                    "objectType": "Agent"
+                },
+                "verb": {
+                    "id": "http://example.com/expapi/verbs/video/" + action,
+                    "display": { "en-US": action }
+                },
+                "object": {
+                    "id": url,
+                    "definition": {
+                        "name": { "en-US": "movie" }
+                    },
+                    "objectType": "Activity"
+                    },
+            "result" : {
+                "response" : vid.currentTime.toString()
+                }
+            };
+
+            ADL.XAPIWrapper.sendStatement(statement, function(){});
+            // adding an empty function() at the end of sendStatement tells it to fire asynchronousely
+      };
+
+    </script>
+
+<script>
+
+var url = window.location.href;
+
+function setCookie(cname,cvalue,exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*01*01*01*1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+//var randomNumberGEN = Math.floor((Math.random() * 900000) + 99999).toString();
+
+function checkCookie() {
+    var user=getCookie("userID");
+     if (user != "") {
+        sendxAPI_Cookie(randomNumberGEN, "found");
+    } else {
+       user = randomNumberGEN;
+       if (user != "" && user != null) {
+           setCookie("userID", user, 30);
+       }
+    }
+}
+
+</script>
+
+</head>
+
+<body onload="checkCookie()">
+<--body onunload="itClosed()">
+
+    <div align="center">
+        xAPI Video Testing for the LLama
+        <br/><br/>
+    </div>
+
+    <!-- This sets the HTML video player provided by the browser -->
+    <div align="center">
+        <video id="mediaPlayer" width="720" controls>
+            <source src="movie.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+
+
+    </div>
+
+    <script>
+
+       //This will set the object to the current url
+        var url = window.location.href;
+
+        // this sets up the Variable "Vid" to point to the video player
+        // so we can interact with it.
+        var vid = document.getElementById("mediaPlayer");
+
+        // When the user hits Play...
+            vid.onplay = function() {
+                let curTime = vid.currentTime.toString();
+         sendxAPIStatement(randomNumberGEN, "Play", vid.currentTime)
+        }; // End Play()
+
+        // When the user hits Pause...
+             vid.onpause = function() {
+        sendxAPIStatement(randomNumberGEN, "Pause")
+        }; // End Pause()
+
+          // When the user hits Volume...
+             vid.onvolumechange = function() {
+                if (vid.muted) {
+                    sendxAPIStatement(randomNumberGEN, "Muted");
+                }
+                else {
+                sendxAPIStatement(randomNumberGEN, "Volume");
+            }
+        }; // End Volume()
+
+                  // When the user makes the video full screen...
+             vid.onwebkitfullscreenchange = function() {
+        sendxAPIStatement(randomNumberGEN, "FullScreen")
+        }; // End Fullscreen()
+
+          // When the user hits Skipped...
+           //  vid.onskipped = function() {
+        //sendxAPIStatement(randomNumberGEN, "Skipped")
+        //}; // End Skipped()
+
+        vid.onseeked = function() {
+            let curTime = vid.currentTime;
+            //let time = vid.time;
+        sendxAPIStatement(randomNumberGEN, "Skipped")
+        }; //
+
+        // When the video completes...
+             vid.onended = function() {
+        sendxAPIStatement(randomNumberGEN, "Completed")
+        }; // End Completed()
+
+        // When the video closes the window...NOT WORKING
+        function itClosed() {
+        //{ return 'Please save'}
+        //window.onunload = function()
+            sendxAPIStatement(randomNumberGEN, "Terminated")
+        }; // End Terminated()
+
+    </script>
+
+
+</body>
+</html>

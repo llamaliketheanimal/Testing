@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--NEED to work on getting all of the scripts into one script into the BODY
+        Flare has an issue with putting a scripts in the HEAD-->
+    <meta charset="utf-8">
+    </head>
+    <body>
+
+<p> </p>
+
+<form id="frm1" action="">
+    Search: <input type="search" id="searchID" name="search"><br><br>
+    <input type="submit" id="theButton" onclick="submit1()" value="Search">
+</form>
+
+        <p>
+        <code><pre id='output'></pre></code>
+        </p>
+       
+    <!-- Includes for ADL's xAPI Wrapper -->  
+    <!-- Download the files from: -->  
+    <!-- https://github.com/adlnet/xAPIWrapper -->  
+   <script type="text/javascript" src="cryptojs_v3.1.2.js"></script>
+   <script type="text/javascript" src="verbs.js"></script>
+   <script type="text/javascript" src="xapistatement.js"></script>
+   <script type="text/javascript" src="xapiwrapper.js"></script>
+     
+      <script> 
+        // this will creat a number that can be used for the actor
+        // this number needs to be converted to a string to be used by the LRS as the actor  
+
+      var randomNumberGEN = Math.floor((Math.random() * 900000) + 99999).toString();
+  
+        // Set the URL and user credentials for the LRS  
+
+        document.cookie = "randomNumberGEN";
+
+        function submit1() {
+            var conf = {  
+        "endpoint" : "https://watershedlrs.com/api/organizations/3891/lrs/",  
+             "auth" : "Basic " + toBase64("e569192095b6e0:b7ee4b467eaaf4")                
+        };    
+
+    // Tell the xAPI driver to use these creds  
+ ADL.XAPIWrapper.changeConfig(conf);  
+
+                var search = document.getElementById("searchID").value;
+                //This will set the response to the input in the "search" form
+                var url = window.location.href;
+                //This will set the object to the current url
+
+var statement = {  
+            "actor": { 
+                 "account": {  
+                "homePage": "http://www.example.com",
+                "name": randomNumberGEN,
+            },
+                "objectType": "Agent"  
+            },  
+            "verb": {  
+                "id": url,  
+                "display": {"en-US": "searched"}  
+            },  
+            "object": {  
+                "id": "http://adlnet.gov/expapi/activities/question",  
+                "definition": {  
+                    "name": {
+                        "en-US": "SCP Help"},  
+                    "description": {"en-US": "Page from SCP Help"}  
+                },  
+                "objectType": "Activity"  
+
+            },
+            "result" : { 
+                "response" : search
+        }  
+        };
+
+        var result = ADL.XAPIWrapper.sendStatement(statement);  
+
+         };  
+  
+    </script>  

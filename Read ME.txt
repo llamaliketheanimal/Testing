@@ -1,0 +1,7 @@
+This is a testing folder for xAPI docs.
+
+Each of the docs work becasue they are pointing at this folder for the source files.  If you want to move them to another location, you will nee dto move the source files.
+
+If you are still not getting results, be sure to check to see if the both the .html file and the xapiwrapper.js file have the LRS configured correctly.
+
+-AM 1/8/18
